@@ -1,0 +1,27 @@
+{% extends "base-template.html" %}
+
+{% block title %}
+    Admin Page
+{% endblock %}
+
+{% block content %}
+    <h1 id="main-heading">Admin Page</h1>
+    <p>Acting admin: {{ current_user.name }}</p>
+
+    <table>
+        <tr>
+            <th>Click to send message</th>
+            <th>Request admin's help</th>
+            <th>Remove user from forum</th>
+        </tr>
+        {% for user in users %}
+            <tr>
+                <td><a href="{{ url_for('bp_user.message_get', user_id=user.id) }}">{{ user.name }}</a></td>
+                <td><a href="{{ url_for('bp_user.message_get', user_id=user.id) }}">{{ user.name }}</a></td>
+                <td><a href="{{ url_for('bp_user.message_get', user_id=user.id) }}">{{ user.name }}</a></td>
+            </tr>
+        {% endfor %}
+    </table>
+
+{% endblock %}
+

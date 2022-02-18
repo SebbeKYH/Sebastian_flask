@@ -1,0 +1,22 @@
+{% extends "base-template.html" %}
+
+{% block title %}
+    Main Page
+{% endblock %}
+
+{% block content %}
+    <h1>This is the start page</h1>
+    <p>
+    This webpage can be used to send and recieve messages
+    <p/>
+    <h2>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="notification">
+                    {{ messages[0] }}.</a>
+                </div>
+            {% endif %}
+        {% endwith %}
+    </h2>
+{% endblock %}
+

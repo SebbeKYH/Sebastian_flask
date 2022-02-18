@@ -1,0 +1,4 @@
+
+# Make admin get information on what user needs contacting
+# Make admin get the ability to delete user
+# Make sure github is working
