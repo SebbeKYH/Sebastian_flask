@@ -47,11 +47,3 @@ def mailbox_get():
     messages = get_user_messages()
     return render_template('mailbox.html', messages=messages)
 
-#TODO Make sure to implement that button click makes an entry to database that can be viewed in admin
-# TODO Work in progress, not really sure what I'm doing...
-
-@bp_user.post('/profile')
-def admin_contact():
-    from app import db
-    db.session.add()
-    db.session.commit()

@@ -14,8 +14,6 @@ class User(db.Model):
     password = db.Column(db.String(100))
     admin = db.Column(db.BOOLEAN, default=True)
     online = db.Column(db.BOOLEAN, default=False)
-    # TODO I dont think this works either
-    admin_contact = db.Column(db.BOOLEAN, default=False)
     sent_messages = db.relationship('Message', backref='sender', lazy=True)
     recv_messages = db.relationship('Message', secondary=message_recv, lazy='subquery',
                                     backref=db.backref('receivers', lazy=True))
