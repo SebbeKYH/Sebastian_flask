@@ -1,4 +1,3 @@
 
 # Encryption between client and server vice versa
 # Make admin get the ability to delete user
-# Make sure github is working
