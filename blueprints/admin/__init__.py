@@ -1,9 +1,12 @@
+import sqlalchemy
 from flask import Blueprint, render_template, redirect, url_for, flash
 from flask_login import current_user
+from sqlalchemy import text
 
 from blueprints import user
 from controllers.message_controller import get_user_messages
 from controllers.user_controller import get_all_but_current_user
+from controllers.user_controller import get_user_by_email
 
 bp_admin = Blueprint('bp_admin', __name__)
 
@@ -22,13 +25,14 @@ def admin_get():
     return render_template('admin.html', users=users, messages=messages)
 
 # TODO lyckas inte få rätt på hur jag tar bort rader från databasen
-@bp_admin.post('/admin')
-def delete_post():
+@bp_admin.get('/admin/<user_email>')
+def delete_get(user_email):
     from models import User
-    delete_user = User.query.filter(User.email).first()
+    delete_user = User.query.filter(user_email).first()
     from app import db
     db.session.delete(delete_user)
     db.session.commit()
+    return redirect(url_for('bp_admin.admin.get'))
 
 
 
