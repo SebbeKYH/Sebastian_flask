@@ -19,9 +19,11 @@ class User(db.Model):
     password = db.Column(db.String(100))
     admin = db.Column(db.BOOLEAN, default=False)
     online = db.Column(db.BOOLEAN, default=False)
+    rsa_key_pub = db.Column(db.String(1000))
     sent_messages = db.relationship('Message', backref='sender', lazy=True)
     recv_messages = db.relationship('Message', secondary=message_recv, lazy='subquery',
                                     backref=db.backref('receivers', lazy=True))
+
 
     def is_active(self):
         return True

@@ -62,13 +62,12 @@ def signup_post():
 
     new_user = User(name=name, email=email, password=hashed_password)
 
-    # Trying to generate keys here...
-    from blueprints import encryption
-    encryption.generate_rsa(key_name=name,key_size=2048)
-
-
     from app import db
     db.session.add(new_user)
     db.session.commit()
+
+    # Trying to generate keys here...
+    from blueprints import encryption
+    encryption.generate_rsa(key_name=name,key_size=2048)
 
     return redirect(url_for('bp_open.login_get'))
