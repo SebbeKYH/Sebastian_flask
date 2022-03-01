@@ -17,7 +17,7 @@ class User(db.Model):
     name = db.Column(db.String(150))
     email = db.Column(db.String(150), unique=True)
     password = db.Column(db.String(100))
-    admin = db.Column(db.BOOLEAN, default=True)
+    admin = db.Column(db.BOOLEAN, default=False)
     online = db.Column(db.BOOLEAN, default=False)
     sent_messages = db.relationship('Message', backref='sender', lazy=True)
     recv_messages = db.relationship('Message', secondary=message_recv, lazy='subquery',

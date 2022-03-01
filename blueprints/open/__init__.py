@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_user
 
+
 from models import User
 from passlib.hash import argon2
 
@@ -60,6 +61,11 @@ def signup_post():
         return redirect(url_for('bp_open.signup_get'))
 
     new_user = User(name=name, email=email, password=hashed_password)
+
+    # Trying to generate keys here...
+    from blueprints import encryption
+    encryption.generate_rsa(key_name=name,key_size=2048)
+
 
     from app import db
     db.session.add(new_user)
