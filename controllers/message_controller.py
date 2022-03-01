@@ -1,18 +1,21 @@
 from flask_login import current_user
-
+from blueprints import encryption
 from controllers.user_controller import get_user_by_id
 
 
 def create_message(title, body, receiver_id):
     from models import Message
     user = current_user
-    message = Message(title=title, body=body, sender_id=user.id)
-
+    encrypted_body = encryption.encrypt_message(body)
+    message = Message(title=title, body=encrypted_body[1], sender_id=user.id)
+#    from models import Encrypt
+#    encrypt = Encrypt(key=encrypted_body[0], cipher_nonce=encrypted_body[2], tag=encrypted_body[3], message_id=message.id)
     receiver_id = int(receiver_id)
     receiver = get_user_by_id(receiver_id)
     message.receivers.append(receiver)
     from app import db
     db.session.add(message)
+#    db.session.add(encrypt)
     db.session.commit()
 
 

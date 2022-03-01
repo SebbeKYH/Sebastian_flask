@@ -6,6 +6,11 @@ message_recv = db.Table('message_recv',
                         db.Column('message_id', db.Integer, db.ForeignKey('message.id'), primary_key=True)
                         )
 
+#message_encrypt = db.Table('message_encrypt',
+#                           db.Column('message_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
+#                           db.Column('encrypt_id', db.Integer, db.ForeignKey('encrypt.id'), primary_key=True)
+#                           )
+
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -38,5 +43,13 @@ class Message(db.Model):
     read = db.Column(db.BOOLEAN, default=False)
     sent_time = db.Column(db.DateTime, default=datetime.datetime.now())
     sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+
+#class Encrypt(db.Model):
+#    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#    key = db.Column(db.String(500))
+#    cipher_nonce = db.Column(db.String(500))
+#    tag = db.Column(db.String(500))
+#    message_id = db.Column(db.Integer, db.ForeignKey('message.id'), nullable=False)
 
 

@@ -16,6 +16,7 @@ def get_user_by_id(user_id):
     from models import User
     return User.query.filter(User.id == user_id).first()
 
+
 def get_user_by_email(user_email):
     from models import User
     return User.query.filter(User.email == user_email).first()
