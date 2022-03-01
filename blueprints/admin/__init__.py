@@ -24,15 +24,15 @@ def admin_get():
     users = get_all_but_current_user()
     return render_template('admin.html', users=users, messages=messages)
 
-# TODO lyckas inte få rätt på hur jag tar bort rader från databasen
-@bp_admin.get('/admin/<user_email>')
-def delete_get(user_email):
+
+@bp_admin.get('/admin/<user_id>')
+def delete_get(user_id):
     from models import User
-    delete_user = User.query.filter(user_email).first()
+    delete_user = User.query.filter(User.id==user_id).delete()
     from app import db
-    db.session.delete(delete_user)
     db.session.commit()
-    return redirect(url_for('bp_admin.admin.get'))
+    flash('User successfully deleted!')
+    return redirect(url_for('bp_admin.admin_get'))
 
 
 

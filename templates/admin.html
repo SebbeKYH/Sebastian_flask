@@ -9,7 +9,6 @@
     <p>Acting admin: {{ current_user.name }}</p>
     <p>Click on specific user to start a conversation with users that need admin help</p>
     <p>or click on a name to remove the user from the communications platform.</p>
-
     <table>
         <tr>
             <th>Click to send message</th>
@@ -24,5 +23,12 @@
             </tr>
         {% endfor %}
     </table>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="notification">
+                    {{ messages[0] }}.</a>
+                </div>
+            {% endif %}
+        {% endwith %}
 {% endblock %}
 
