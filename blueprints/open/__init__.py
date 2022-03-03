@@ -1,3 +1,5 @@
+from Crypto.Cipher import PKCS1_OAEP
+from Crypto.PublicKey import RSA
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_user
 
@@ -52,8 +54,6 @@ def signup_post():
     email = request.form.get('email')
     password = request.form['password']
     hashed_password = argon2.using(rounds=10).hash(password)
-
-    # Check if user with this password exists in the database
     user = User.query.filter_by(email=email).first()  # First will give us an object if user exist, or None if not
     if user:
         # If user is not none, then a user with this email exists in the database
@@ -61,13 +61,21 @@ def signup_post():
         return redirect(url_for('bp_open.signup_get'))
 
     new_user = User(name=name, email=email, password=hashed_password)
-
+    # Trying to generate keys here...
+    #Encryption....
+    from blueprints import encryption
+    # Call function to create key-pairs
+    encryption.generate_rsa(key_name=name,key_size=2048)
+    #TODO trying to export public key to database for specific user...
+    pub_key = RSA.importKey(open(f'./keys/{name}_public.pem').read())
+    new_pub_key = User(rsa_key_pub=pub_key)
+    fulltext_rsa = PKCS1_OAEP.new(new_pub_key)
+    real_fulltext_rsa = fulltext_rsa.encrypt(message=new_pub_key)
+    # Check if user with this password exists in the database
     from app import db
     db.session.add(new_user)
+    db.session.add(real_fulltext_rsa)
     db.session.commit()
 
-    # Trying to generate keys here...
-    from blueprints import encryption
-    encryption.generate_rsa(key_name=name,key_size=2048)
 
     return redirect(url_for('bp_open.login_get'))

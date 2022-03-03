@@ -39,9 +39,5 @@ def generate_rsa(key_name, key_size=2048):
         out_file.write(public_key)
 
 
-def rsa_encrypt():
-    pass
-
-
 def rsa_decrypt():
     pass
