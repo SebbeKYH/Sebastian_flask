@@ -45,9 +45,11 @@ def create_app():
     from blueprints.user import bp_user
     app.register_blueprint(bp_user)
 
+    # Register the admin blueprint with the app object
     from blueprints.admin import bp_admin
     app.register_blueprint(bp_admin)
 
+    # Register the ajax blueprint with the app object
     from blueprints.ajax import bp_ajax
     app.register_blueprint(bp_ajax)
 

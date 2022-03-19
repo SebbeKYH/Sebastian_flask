@@ -1,12 +1,10 @@
-import sqlalchemy
+
 from flask import Blueprint, render_template, redirect, url_for, flash
 from flask_login import current_user
-from sqlalchemy import text
 
-from blueprints import user
 from controllers.message_controller import get_user_messages
 from controllers.user_controller import get_all_but_current_user
-from controllers.user_controller import get_user_by_email
+
 
 bp_admin = Blueprint('bp_admin', __name__)
 

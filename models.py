@@ -1,17 +1,13 @@
 import datetime
 from app import db
 
+# Creation of relational table for interaction between tables (classes)
 message_recv = db.Table('message_recv',
                         db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
                         db.Column('message_id', db.Integer, db.ForeignKey('message.id'), primary_key=True)
                         )
 
-#message_encrypt = db.Table('message_encrypt',
-#                           db.Column('message_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
-#                           db.Column('encrypt_id', db.Integer, db.ForeignKey('encrypt.id'), primary_key=True)
-#                           )
-
-
+# Create User class object for interaction with the database
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(150))
@@ -38,6 +34,7 @@ class User(db.Model):
         return self.id
 
 
+# Create Message class object for interaction with the database
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(250))
@@ -47,11 +44,5 @@ class Message(db.Model):
     sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
 
-#class Encrypt(db.Model):
-#    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-#    key = db.Column(db.String(500))
-#    cipher_nonce = db.Column(db.String(500))
-#    tag = db.Column(db.String(500))
-#    message_id = db.Column(db.Integer, db.ForeignKey('message.id'), nullable=False)
 
 

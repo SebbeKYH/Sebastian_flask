@@ -11,25 +11,29 @@ from passlib.hash import argon2
 bp_open = Blueprint('bp_open', __name__)
 
 
+#Route for homepage
 @bp_open.get('/')
 def index():
     return render_template("index.html")
 
 
+#Route for login-page
 @bp_open.get('/login')
 def login_get():
     return render_template('login.html')
 
 
+# Handles input via login-page to send to database
 @bp_open.post('/login')
 def login_post():
+    # Input information is fetched...
     email = request.form['email']
     password = request.form['password']
     user = User.query.filter_by(email=email).first()
+    # If mail or password is wrong a message appears...
     if user is None:
         flash('Wrong email or password')
         return redirect(url_for('bp_open.login_get'))
-
     if not argon2.verify(password, user.password):
         flash('Wrong email or password')
         return redirect(url_for('bp_open.login_get'))
@@ -43,11 +47,13 @@ def login_post():
     return redirect(url_for('bp_user.user_get'))
 
 
+# Route for sing-up page...
 @bp_open.get('/signup')
 def signup_get():
     return render_template('signup.html')
 
 
+# Request information from signup page to create new user
 @bp_open.post('/signup')
 def signup_post():
     name = request.form['name']
@@ -68,13 +74,14 @@ def signup_post():
     encryption.generate_rsa(key_name=name,key_size=2048)
     #TODO trying to export public key to database for specific user...
     pub_key = RSA.importKey(open(f'./keys/{name}_public.pem').read())
+    print(pub_key)
     new_pub_key = User(rsa_key_pub=pub_key)
     fulltext_rsa = PKCS1_OAEP.new(new_pub_key)
-    real_fulltext_rsa = fulltext_rsa.encrypt(message=new_pub_key)
+    #real_fulltext_rsa = fulltext_rsa.encrypt(message=new_pub_key)
     # Check if user with this password exists in the database
     from app import db
     db.session.add(new_user)
-    db.session.add(real_fulltext_rsa)
+    #db.session.add(real_fulltext_rsa)
     db.session.commit()
 
 
