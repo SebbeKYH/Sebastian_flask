@@ -38,7 +38,6 @@ def message_post():
     title = request.form['title']
     body = request.form['body']
     receiver_id = request.form['user_id']
-    print(title)
     create_message(title, body, receiver_id)
     return redirect(url_for('bp_user.user_get'))
 

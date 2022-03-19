@@ -22,7 +22,7 @@ def encrypt_message(message):
 #    # Decrypt the message
 #    decrypted_data = cipher_aes.decrypt_and_verify(ciphertext, tag)
 
-    return decrypted_data.decode('utf-8')
+#    return decrypted_data.decode('utf-8')
 
 
 def generate_rsa(key_name, key_size=2048):

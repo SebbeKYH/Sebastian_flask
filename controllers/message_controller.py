@@ -8,8 +8,6 @@ def create_message(title, body, receiver_id):
     user = current_user
     encrypted_body = encryption.encrypt_message(body)
     message = Message(title=title, body=encrypted_body[1], sender_id=user.id)
-#    from models import Encrypt
-#    encrypt = Encrypt(key=encrypted_body[0], cipher_nonce=encrypted_body[2], tag=encrypted_body[3], message_id=message.id)
     receiver_id = int(receiver_id)
     receiver = get_user_by_id(receiver_id)
     message.receivers.append(receiver)
