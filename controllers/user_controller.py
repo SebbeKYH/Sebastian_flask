@@ -37,4 +37,3 @@ def generate_rsa(key_name, key_size=2048):
     public_key = key.public_key().export_key()
     with open(f'./keys/{key_name}_public.pem', 'wb') as out_file:
         out_file.write(public_key)
-    #return public_key

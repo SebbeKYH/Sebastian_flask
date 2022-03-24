@@ -4,21 +4,27 @@ from Crypto.PublicKey.RSA import RsaKey
 from Crypto.Random import get_random_bytes
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import AES, PKCS1_OAEP
+import base64
 
-def create_message(title, body, receiver_id, user_email):
+def create_message(title, body, receiver_id):
     from models import Message
+    # User is the current logged in user
     user = current_user
-    message = Message(title=title, body=body, sender_id=user.id)
-    aes_encrypt(message=body)
-    # CREATE REFERENCE TO KEY NAME
-    recipient_rsa_key_name = get_user_by_email(user_email)
 
-    encrypted_aes_key = rsa_encrypt(recipient_rsa_key_name, aes_encrypt(message=body))
+    message = Message(title=title, body=body, sender_id=user.id)
+    aes_key, aes_cipher, aes_nonce, aes_tag = aes_encrypt(message)
+    # CREATE REFERENCE TO KEY NAME
+
     receiver_id = int(receiver_id)
     receiver = get_user_by_id(receiver_id)
+
+    #recipient_rsa_key_name = get_user_by_email(user_email=User.email)
+    encrypted_aes_key = rsa_encrypt(key_name=receiver.email, message=aes_key)
+    #encoded = base64.b64encode(encrypted_aes_key, 'utf-8')
     message.receivers.append(receiver)
     from app import db
-    db.session.add(encrypted_aes_key)
+
+    db.session.add(message)
     db.session.commit()
 
 
@@ -41,6 +47,6 @@ def aes_encrypt(message):
     return key, ciphertext, cipher_aes.nonce, tag
 
 def rsa_encrypt(key_name, message):
-    recipient_key = RSA.importKey(open(f'.keys/{key_name}.pem').read())
+    recipient_key = RSA.importKey(open(f'./keys/{key_name}_public.pem').read())
     cipher_rsa = PKCS1_OAEP.new(recipient_key)
     return cipher_rsa.encrypt(message)
