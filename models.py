@@ -40,6 +40,8 @@ class Message(db.Model):
     title = db.Column(db.String(250))
     body = db.Column(db.Text)
     aes_key = db.Column(db.Text)
+    aes_nonce = db.Column(db.Text)
+    aes_tag = db.Column(db.Text)
     read = db.Column(db.BOOLEAN, default=False)
     sent_time = db.Column(db.DateTime, default=datetime.datetime.now())
     sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)

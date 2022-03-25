@@ -1,3 +1,5 @@
+import os
+
 from flask_login import current_user
 from controllers.user_controller import get_user_by_id, get_user_by_email
 from Crypto.PublicKey.RSA import RsaKey
@@ -15,16 +17,9 @@ def create_message(body, receiver_id):
     encypted_message, aes_key, nonce, tag = aes_encrypt_message(message=body)
     encrypted_key = rsa_encrypt(rsa_key_name=receiver.email, key=aes_key)
     # Message will contain title body and sender_id
-    message = Message(aes_key=encrypted_key, body=encypted_message, sender_id=user.id)
+    message = Message(aes_key=encrypted_key, body=encypted_message, sender_id=user.id, aes_nonce=nonce, aes_tag=tag)
     message.receivers.append(receiver)
-
-    #reciever_email = receiver.email
-
-    #recipient_rsa_key_name = get_user_by_email(user_email=User.email)
-
-    #encoded = base64.b64encode(encrypted_aes_key, 'utf-8')
     from app import db
-
     db.session.add(message)
     db.session.commit()
 
@@ -51,6 +46,21 @@ def aes_encrypt_message(message):
     cipher_aes = AES.new(key, AES.MODE_EAX)
     ciphertext, tag = cipher_aes.encrypt_and_digest(message.encode('utf8'))
     return ciphertext, key, cipher_aes.nonce, tag
+
+
+def rsa_decrypt(cipher, private_key):
+    if type(private_key) != RsaKey:
+        if os.path.isfile(f'./keys/{private_key}_private.pem'):
+            private_key = RSA.importKey(open(f'./keys/{private_key}_private.pem').read())
+        else:
+            print(f'No key file named {private_key}_private.pem found')
+            return ""
+    cipher_rsa = PKCS1_OAEP.new(private_key)
+    return cipher_rsa.decrypt(cipher)
+
+
+
+    # return cipher_rsa.decrypt(cipher).decode('utf-8')
 
 #def aes_key():
 #    key = get_random_bytes(16)

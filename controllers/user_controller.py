@@ -21,6 +21,7 @@ def get_user_by_id(user_id):
 
 def get_user_by_email(user_email):
     from models import User
+    #user = current_user
     return User.query.filter(User.email == user_email).first()
 
 
