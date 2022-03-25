@@ -6,15 +6,14 @@ from Crypto.PublicKey import RSA
 from Crypto.Cipher import AES, PKCS1_OAEP
 import base64
 
-def create_message(title, body, receiver_id):
+def create_message(body, receiver_id):
     from models import Message
     # User is the current logged in user
     user = current_user
     receiver_id = int(receiver_id)
     receiver = get_user_by_id(receiver_id)
-
-    encypted_message = aes_encrypt_message(message=body)
-    encrypted_key = rsa_encrypt(rsa_key_name=receiver.email, key=encypted_message.key)
+    encypted_message, aes_key, nonce, tag = aes_encrypt_message(message=body)
+    encrypted_key = rsa_encrypt(rsa_key_name=receiver.email, key=aes_key)
     # Message will contain title body and sender_id
     message = Message(aes_key=encrypted_key, body=encypted_message, sender_id=user.id)
     message.receivers.append(receiver)
@@ -44,14 +43,14 @@ def get_unread_msg_count():
 
 def rsa_encrypt(rsa_key_name, key):
     recipient_key = RSA.importKey(open(f'./keys/{rsa_key_name}_public.pem').read())
-    cipher_rsa = PKCS1_OAEP(recipient_key)
+    cipher_rsa = PKCS1_OAEP.new(recipient_key)
     return cipher_rsa.encrypt(key)
 
 def aes_encrypt_message(message):
     key = get_random_bytes(16)
     cipher_aes = AES.new(key, AES.MODE_EAX)
     ciphertext, tag = cipher_aes.encrypt_and_digest(message.encode('utf8'))
-    return ciphertext, key
+    return ciphertext, key, cipher_aes.nonce, tag
 
 #def aes_key():
 #    key = get_random_bytes(16)
