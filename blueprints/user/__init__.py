@@ -43,12 +43,4 @@ def message_post():
 @bp_user.get('/mailbox')
 def mailbox_get():
     messages = get_user_messages()
-    from models import User
-    # TODO get reference to email for decryption cipher
-    email = current_user.email
-    user_email = User.query.filter_by(email=email).first()
-    aes_message = User.query
-    #rsa_decrypt(cipher=encrypted_message)
-
     return render_template('mailbox.html', messages=messages)
-

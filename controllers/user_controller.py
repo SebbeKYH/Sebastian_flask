@@ -3,6 +3,7 @@ from Crypto.PublicKey import RSA
 from Crypto.Cipher import AES, PKCS1_OAEP
 from flask_login import current_user
 
+
 def get_all_but_current_user():
     from models import User
     user = current_user
@@ -21,11 +22,11 @@ def get_user_by_id(user_id):
 
 def get_user_by_email(user_email):
     from models import User
-    #user = current_user
+    # user = current_user
     return User.query.filter(User.email == user_email).first()
 
 
-def generate_rsa(key_name, key_size=2048):
+def generate_rsa(key_name, key_size=1024):
     # Generate a key-pair with the specified key size
     key = RSA.generate(key_size)
 
@@ -38,3 +39,5 @@ def generate_rsa(key_name, key_size=2048):
     public_key = key.public_key().export_key()
     with open(f'./keys/{key_name}_public.pem', 'wb') as out_file:
         out_file.write(public_key)
+
+    return public_key

@@ -62,13 +62,15 @@ def signup_post():
     hashed_password = argon2.using(rounds=10).hash(password)
     user = User.query.filter_by(email=email).first()
     #Encryption....
-    public_key=generate_rsa(key_name=email)
+    public_key=generate_rsa(email)
     if user:
         # If user is not none, then a user with this email exists in the database
         flash("Email address is already in use")
         return redirect(url_for('bp_open.signup_get'))
 
-    new_user = User(name=name, email=email, password=hashed_password)
+    #from models import Message
+    #key = Message(rsa_key=public_key)
+    new_user = User(name=name, email=email, password=hashed_password, public_rsa_key=public_key)
 
     from app import db
     db.session.add(new_user)

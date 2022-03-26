@@ -1,23 +1,23 @@
 import os
 
 from flask_login import current_user
-from controllers.user_controller import get_user_by_id, get_user_by_email
+from controllers.user_controller import get_user_by_id, get_user_by_email, generate_rsa
 from Crypto.PublicKey.RSA import RsaKey
 from Crypto.Random import get_random_bytes
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import AES, PKCS1_OAEP
-import base64
+
 
 def create_message(body, receiver_id):
     from models import Message
-    # User is the current logged in user
     user = current_user
     receiver_id = int(receiver_id)
     receiver = get_user_by_id(receiver_id)
-    encypted_message, aes_key, nonce, tag = aes_encrypt_message(message=body)
-    encrypted_key = rsa_encrypt(rsa_key_name=receiver.email, key=aes_key)
-    # Message will contain title body and sender_id
-    message = Message(aes_key=encrypted_key, body=encypted_message, sender_id=user.id, aes_nonce=nonce, aes_tag=tag)
+    aes_encrypted_message, aes_key, nonce, tag = aes_encrypt_message(body)
+
+    encrypted_key = rsa_encrypt(receiver.email, aes_key)
+    message = Message(aes_key=encrypted_key, body=aes_encrypted_message, sender_id=user.id, aes_nonce=nonce, aes_tag=tag)
+
     message.receivers.append(receiver)
     from app import db
     db.session.add(message)
@@ -36,10 +36,17 @@ def get_unread_msg_count():
             msg_count += 1
     return msg_count
 
+
 def rsa_encrypt(rsa_key_name, key):
-    recipient_key = RSA.importKey(open(f'./keys/{rsa_key_name}_public.pem').read())
+    print(rsa_key_name)
+    niklas = "sebastian"
+    print()
+    path_to_file = "C:/Code/NEW_CODE/Comupter_Communication_and_Safety/Joakim projects/first_flask/keys/"
+    recipient_key = RSA.importKey(open(f'{path_to_file}{rsa_key_name}_public.pem', 'r').read())
+    #f'./keys/{rsa_key_name}_public.pem', 'r'
     cipher_rsa = PKCS1_OAEP.new(recipient_key)
     return cipher_rsa.encrypt(key)
+
 
 def aes_encrypt_message(message):
     key = get_random_bytes(16)
@@ -58,16 +65,14 @@ def rsa_decrypt(cipher, private_key):
     cipher_rsa = PKCS1_OAEP.new(private_key)
     return cipher_rsa.decrypt(cipher)
 
-
-
     # return cipher_rsa.decrypt(cipher).decode('utf-8')
 
-#def aes_key():
+# def aes_key():
 #    key = get_random_bytes(16)
 #    cipher_key_aes = AES.new(key, AES.MODE_EAX)
 #    return cipher_key_aes
 
-#def encrypt(reciever_email, message):
+# def encrypt(reciever_email, message):
 #    key = get_random_bytes(16)
 #    cipher_aes = AES.new(key, AES.MODE_EAX)
 #    ciphertext, tag = cipher_aes.encrypt_and_digest(message.encode('utf-8'))
@@ -77,8 +82,8 @@ def rsa_decrypt(cipher, private_key):
 #    rsa_aes_combo = cipher_rsa.encrypt(key)
 
 #    return rsa_aes_combo
-    #return key, ciphertext, cipher_aes.nonce, tag
+# return key, ciphertext, cipher_aes.nonce, tag
 
 
-#def rsa_encrypt(key_name, key):
+# def rsa_encrypt(key_name, key):
 #    return cipher_rsa.encrypt(key)

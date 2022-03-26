@@ -13,7 +13,7 @@ class User(db.Model):
     name = db.Column(db.String(150))
     email = db.Column(db.String(150), unique=True)
     password = db.Column(db.String(100))
-    public_rsa_key = db.Column(db.String(2048))
+    public_rsa_key = db.Column(db.VARCHAR(2048))
     admin = db.Column(db.BOOLEAN, default=False)
     online = db.Column(db.BOOLEAN, default=False)
     sent_messages = db.relationship('Message', backref='sender', lazy=True)
@@ -37,11 +37,11 @@ class User(db.Model):
 # Create Message class object for interaction with the database
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    title = db.Column(db.String(250))
     body = db.Column(db.Text)
     aes_key = db.Column(db.Text)
     aes_nonce = db.Column(db.Text)
     aes_tag = db.Column(db.Text)
+    rsa_key = db.Column(db.Text)
     read = db.Column(db.BOOLEAN, default=False)
     sent_time = db.Column(db.DateTime, default=datetime.datetime.now())
     sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
