@@ -1,9 +1,8 @@
 from flask import Blueprint, render_template, redirect, url_for, request
 from flask_login import logout_user, login_required, current_user
 
-from controllers.message_controller import create_message, get_user_messages
+from controllers.message_controller import create_message, get_user_messages, decrypt_message
 from controllers.user_controller import get_all_but_current_user, get_user_by_id
-import json
 
 bp_user = Blueprint('bp_user', __name__)
 
@@ -43,7 +42,11 @@ def message_post():
 @bp_user.get('/mailbox')
 def mailbox_get():
     messages = get_user_messages()
-
+    path_to_file = "C:/Code/NEW_CODE/Comupter_Communication_and_Safety/Joakim projects/first_flask/keys/"
+    from Crypto.PublicKey import RSA
+    rsa_key_name = current_user.email
+    priv_key_name = RSA.importKey(open(f'{path_to_file}{rsa_key_name}_private.pem', 'r').read())
+    decrypted_message = decrypt_message(priv_key_name=priv_key_name)
     #rsa_decrypt_cipher = rsa_decrypt(cipher, recipient_key)
 
     return render_template('mailbox.html', messages=messages)

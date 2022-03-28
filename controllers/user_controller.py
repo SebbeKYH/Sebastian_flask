@@ -1,6 +1,4 @@
-from Crypto.Random import get_random_bytes
 from Crypto.PublicKey import RSA
-from Crypto.Cipher import AES, PKCS1_OAEP
 from flask_login import current_user
 
 
@@ -22,7 +20,6 @@ def get_user_by_id(user_id):
 
 def get_user_by_email(user_email):
     from models import User
-    # user = current_user
     return User.query.filter(User.email == user_email).first()
 
 
