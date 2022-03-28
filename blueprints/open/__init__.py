@@ -62,7 +62,7 @@ def signup_post():
     hashed_password = argon2.using(rounds=10).hash(password)
     user = User.query.filter_by(email=email).first()
     #Encryption....
-    public_key=generate_rsa(email)
+    public_key = generate_rsa(email)
     if user:
         # If user is not none, then a user with this email exists in the database
         flash("Email address is already in use")

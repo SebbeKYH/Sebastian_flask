@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request
 from flask_login import logout_user, login_required, current_user
 
-from controllers.message_controller import create_message, get_user_messages, rsa_decrypt
+from controllers.message_controller import create_message, get_user_messages
 from controllers.user_controller import get_all_but_current_user, get_user_by_id
 import json
 
@@ -43,4 +43,7 @@ def message_post():
 @bp_user.get('/mailbox')
 def mailbox_get():
     messages = get_user_messages()
+
+    #rsa_decrypt_cipher = rsa_decrypt(cipher, recipient_key)
+
     return render_template('mailbox.html', messages=messages)
