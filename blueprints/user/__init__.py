@@ -47,6 +47,6 @@ def mailbox_get():
     rsa_key_name = current_user.email
     priv_key_name = RSA.importKey(open(f'{path_to_file}{rsa_key_name}_private.pem', 'r').read())
     decrypted_message = decrypt_message(priv_key_name=priv_key_name)
-    #rsa_decrypt_cipher = rsa_decrypt(cipher, recipient_key)
+    important_message = decrypted_message.messages
 
-    return render_template('mailbox.html', messages=messages)
+    return render_template('mailbox.html', messages=messages, decrypted_message=important_message)
