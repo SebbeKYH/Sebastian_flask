@@ -23,6 +23,7 @@ def create_message(body, receiver_id):
     from app import db
     db.session.add(message)
     db.session.commit()
+    return aes_encrypted_message, aes_key, nonce, tag
 
 
 def get_user_messages():
@@ -38,9 +39,40 @@ def get_unread_msg_count():
     return msg_count
 
 
-def get_key_by_id(message_aes_key):
+def get_aes_message(message_id):
     from models import Message
-    return Message.query.filter(Message.aes_key == message_aes_key).first()
+    database_aes_message = Message.query.filter(message_id==message_id).first()
+    aes_message = database_aes_message.body
+    return aes_message
+
+
+def get_aes_key(message_id):
+    from models import Message
+    database_aes_key = Message.query.filter(message_id==message_id).first()
+    aes_key = database_aes_key.aes_key
+    return aes_key
+
+
+def get_aes_nonce(message_id):
+    from models import Message
+    # KANSKE SKA VARA ALL() HÄR
+    database_nonce = Message.query.filter(message_id==message_id).first()
+    aes_nonce = database_nonce.aes_nonce
+    return aes_nonce
+
+
+def get_aes_tag(message_id):
+    from models import Message
+    database_tag = Message.query.filter(message_id==message_id).first()
+    aes_tag = database_tag.aes_tag
+    return aes_tag
+
+
+def get_sender_id():
+    from models import Message
+    database_sender_id = Message.query.filter(Message.sender_id).first()
+    aes_sender_id = database_sender_id.sender_id
+    return aes_sender_id
 
 
 def rsa_encrypt(rsa_key_name, key):
@@ -58,32 +90,48 @@ def aes_encrypt_message(message):
     return ciphertext, key, cipher_aes.nonce, tag
 
 # TODO I NEED THIS ONE
-#def rsa_decrypt(cipher, private_key):
-#    if type(private_key) != RsaKey:
-#        if os.path.isfile(f'./keys/{private_key}_private.pem'):
-#            private_key = RSA.importKey(open(f'./keys/{private_key}_private.pem').read())
-#        else:
-#            print(f'No key file named {private_key}_private.pem found')
-#            return ""
-#    cipher_rsa = PKCS1_OAEP.new(private_key)
-#    return cipher_rsa.decrypt(cipher)
+def rsa_decrypt(cipher, private_key):
+    if type(private_key) != RsaKey:
+        if os.path.isfile(f'./keys/{private_key}_private.pem'):
+            private_key = RSA.importKey(open(f'./keys/{private_key}_private.pem').read())
+        else:
+            print(f'No key file named {private_key}_private.pem found')
+            return ""
+    cipher_rsa = PKCS1_OAEP.new(private_key)
+    return cipher_rsa.decrypt(cipher)
 
 
-#TODO I NEED THIS ONE
-#def decrypt_message(priv_key_name, message_aes_key):
-#    aes_key = rsa_decrypt(encrypted_aes_key, priv_key_name)
-#    plaintext = aes_decrypt(aes_key, aes_cipher, aes_nonce, aes_tag)
-#    return plaintext
+#TODO I NEED THIS ONE ( HOW TO GET THE FUCKING VALUE!?)
+def decrypt_message(priv_key_name):
+
+    sender_id = get_sender_id()
+
+    aes_key = get_aes_key(sender_id)
+    print(aes_key)
+
+    nonce = get_aes_nonce(sender_id)
+    print(nonce)
+
+    tag = get_aes_tag(sender_id)
+    print(tag)
+
+    aes_encrypted_message = get_aes_message(sender_id)
+    print (aes_encrypted_message)
+
+
+    aes_encrypted_key = rsa_decrypt(aes_key, priv_key_name)
+    plaintext = aes_decrypt(aes_encrypted_key, aes_encrypted_message, nonce, tag)
+    return plaintext
 
     # return cipher_rsa.decrypt(cipher).decode('utf-8')
 #TODO I NEED THIS ONE
-#def aes_decrypt(aes_key, ciphertext, nonce, tag):
-    # Create an AES object
-#    cipher_aes = AES.new(aes_key, AES.MODE_EAX, nonce)
-    # Decrypt the message
-#    decrypted_data = cipher_aes.decrypt_and_verify(ciphertext, tag)
+def aes_decrypt(aes_key, ciphertext, nonce, tag):
+    #Create an AES object
+    cipher_aes = AES.new(aes_key, AES.MODE_EAX, nonce)
+    #Decrypt the message
+    decrypted_data = cipher_aes.decrypt_and_verify(ciphertext, tag)
 
-#    return decrypted_data.decode('utf-8')
+    return decrypted_data.decode('utf-8')
 
 
 
