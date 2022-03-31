@@ -48,9 +48,6 @@ def mailbox_get():
     from Crypto.PublicKey import RSA
     rsa_key_name = current_user.email
     priv_key_name = RSA.importKey(open(f'{path_to_file}{rsa_key_name}_private.pem', 'r').read())
-
     for message in list_of_messages:
         decrypted_message_list.append(decrypt_message(priv_key_name=priv_key_name, id=message.id))
-
-    print()
     return render_template('mailbox.html', messages=list_of_messages, decrypted_message=decrypted_message_list)
