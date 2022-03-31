@@ -17,7 +17,7 @@ def create_message(body, receiver_id):
     # Encrypt the message and return the message, the key, nonce and tag
     aes_encrypted_message, aes_key, nonce, tag = aes_encrypt_message(body)
     # encrypt the aes key with rsa
-    encrypted_key = rsa_encrypt(receiver.email, aes_key, receiver_id)
+    encrypted_key = rsa_encrypt(aes_key, receiver_id)
     message = Message(aes_key=encrypted_key, body=aes_encrypted_message, sender_id=user.id, aes_nonce=nonce, aes_tag=tag)
     message.receivers.append(receiver)
 

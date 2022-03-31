@@ -59,6 +59,7 @@ def signup_post():
     password = request.form['password']
     hashed_password = argon2.using(rounds=10).hash(password)
     user = User.query.filter_by(email=email).first()
+
     #Generate RSA keys on value of uniqe email, return the public key
     public_key = generate_rsa(email)
     if user:

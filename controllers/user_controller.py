@@ -24,7 +24,7 @@ def get_user_by_email(user_email):
 
 
 def generate_rsa(key_name, key_size=1024):
-    # Generate a key-pair with the specified key size
+    # Generate a key-pair with the specified key size put locally
     key = RSA.generate(key_size)
 
     # Extract the private key
