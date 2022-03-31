@@ -51,7 +51,7 @@ def signup_get():
     return render_template('signup.html')
 
 
-# Request information from signup page to create new user
+# Request information from signup page to create new user and generate rsa keys
 @bp_open.post('/signup')
 def signup_post():
     name = request.form['name']
@@ -59,15 +59,13 @@ def signup_post():
     password = request.form['password']
     hashed_password = argon2.using(rounds=10).hash(password)
     user = User.query.filter_by(email=email).first()
-    #Encryption....
+    #Generate RSA keys on value of uniqe email, return the public key
     public_key = generate_rsa(email)
     if user:
         # If user is not none, then a user with this email exists in the database
         flash("Email address is already in use")
         return redirect(url_for('bp_open.signup_get'))
-
-    #from models import Message
-    #key = Message(rsa_key=public_key)
+    # In creation of new user the public key will also be uploaded
     new_user = User(name=name, email=email, password=hashed_password, public_rsa_key=public_key)
 
     from app import db

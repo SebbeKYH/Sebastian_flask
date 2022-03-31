@@ -18,13 +18,14 @@
                 <td>{{ message.sender.name }}</td>
                 {% if message.sent_time is not none %}
                     <td>{{ message.sent_time.year }}-{{ message.sent_time.month }}-{{ message.sent_time.day }}</td>
-                {% else %}
-                    <td>-</td>
+                    <td>{{ decrypted_message }}</td>
                 {% endif %}
-                <td>{{ decrypted_message }}</td>
             </tr>
         {% endfor %}
     </table>
+        {% for text in message_data %}
+            <ul>{{ text }}</ul>
+        {% endfor %}
 
 {% endblock %}
 

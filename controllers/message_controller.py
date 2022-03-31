@@ -113,23 +113,12 @@ def rsa_decrypt(cipher, private_key):
     return cipher_rsa.decrypt(cipher)
 
 
-def decrypt_message(priv_key_name):
-
-    sender_id = get_sender_id()
-
-    aes_key = get_aes_key(sender_id)
-    print(aes_key)
-
-    nonce = get_aes_nonce(sender_id)
-    print(nonce)
-
-    tag = get_aes_tag(sender_id)
-    print(tag)
-
-    aes_encrypted_message = get_aes_message(sender_id)
-    print (aes_encrypted_message)
-
-
+def decrypt_message(priv_key_name, id):
+    #sender_id = get_sender_id()
+    aes_key = get_aes_key(id)
+    nonce = get_aes_nonce(id)
+    tag = get_aes_tag(id)
+    aes_encrypted_message = get_aes_message(id)
     aes_encrypted_key = rsa_decrypt(aes_key, priv_key_name)
     plaintext = aes_decrypt(aes_encrypted_key, aes_encrypted_message, nonce, tag)
     return plaintext
@@ -140,5 +129,3 @@ def aes_decrypt(aes_key, ciphertext, nonce, tag):
     decrypted_data = cipher_aes.decrypt_and_verify(ciphertext, tag)
 
     return decrypted_data.decode('utf-8')
-
-
