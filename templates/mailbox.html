@@ -7,25 +7,33 @@
 {% block content %}
     <h1 id="main-heading">Mailbox</h1>
 
-    <table>
+    <table style="
+    float: left;
+    width: 49%;">
         <tr>
             <th>Sender</th>
             <th>Sent</th>
-            <th>Message</th>
         </tr>
         {% for message in messages %}
             <tr>
-                <td>{{ message.sender.name }}</td>
+                    <td>{{ message.sender.name }}</td>
                 {% if message.sent_time is not none %}
                     <td>{{ message.sent_time.year }}-{{ message.sent_time.month }}-{{ message.sent_time.day }}</td>
-                    <td>{{ decrypted_message }}</td>
                 {% endif %}
             </tr>
         {% endfor %}
     </table>
-        {% for text in message_data %}
-            <ul>{{ text }}</ul>
+
+        <table style="
+    float: right;
+    width: 49%;">
+        <tr>
+            <th>Message</th>
+        </tr>
+        {% for text in decrypted_message %}
+            <tr>
+                <td>{{ text }}</td>
+            </tr>
         {% endfor %}
-
+    </table>
 {% endblock %}
-

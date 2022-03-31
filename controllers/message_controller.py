@@ -1,7 +1,7 @@
 import os
 
 from flask_login import current_user
-from controllers.user_controller import get_user_by_id, get_user_by_email, generate_rsa
+from controllers.user_controller import get_user_by_id
 from Crypto.PublicKey.RSA import RsaKey
 from Crypto.Random import get_random_bytes
 from Crypto.PublicKey import RSA
@@ -17,7 +17,7 @@ def create_message(body, receiver_id):
     # Encrypt the message and return the message, the key, nonce and tag
     aes_encrypted_message, aes_key, nonce, tag = aes_encrypt_message(body)
     # encrypt the aes key with rsa
-    encrypted_key = rsa_encrypt(receiver.email, aes_key)
+    encrypted_key = rsa_encrypt(receiver.email, aes_key, receiver_id)
     message = Message(aes_key=encrypted_key, body=aes_encrypted_message, sender_id=user.id, aes_nonce=nonce, aes_tag=tag)
     message.receivers.append(receiver)
 
@@ -42,29 +42,28 @@ def get_unread_msg_count():
 
 def get_aes_message(message_id):
     from models import Message
-    database_aes_message = Message.query.filter(message_id==message_id).first()
+    database_aes_message = Message.query.filter(message_id == Message.id).first()
     aes_message = database_aes_message.body
     return aes_message
 
 
 def get_aes_key(message_id):
     from models import Message
-    database_aes_key = Message.query.filter(message_id==message_id).first()
+    database_aes_key = Message.query.filter(message_id == Message.id).first()
     aes_key = database_aes_key.aes_key
     return aes_key
 
 
 def get_aes_nonce(message_id):
     from models import Message
-    # KANSKE SKA VARA ALL() HÄR
-    database_nonce = Message.query.filter(message_id==message_id).first()
+    database_nonce = Message.query.filter(message_id == Message.id).first()
     aes_nonce = database_nonce.aes_nonce
     return aes_nonce
 
 
 def get_aes_tag(message_id):
     from models import Message
-    database_tag = Message.query.filter(message_id==message_id).first()
+    database_tag = Message.query.filter(message_id == Message.id).first()
     aes_tag = database_tag.aes_tag
     return aes_tag
 
@@ -77,14 +76,14 @@ def get_sender_id():
 
 def get_rsa_key(message_id):
     from models import User
-    database_rsa = User.query.filter(message_id==message_id).first()
+    database_rsa = User.query.filter(message_id == User.id).first()
     rsa_key = database_rsa.public_rsa_key
     return rsa_key
 
 
-def rsa_encrypt(rsa_key_name, key):
-    #sender_id = get_sender_id()
-    #recipient_key = get_rsa_key(sender_id)
+def rsa_encrypt(rsa_key_name, key, receiver_id):
+
+    #recipient_key = get_rsa_key(receiver_id)
     #imported_key = RSA.importKey(recipient_key)
 
     path_to_file = "C:/Code/NEW_CODE/Comupter_Communication_and_Safety/Joakim projects/first_flask/keys/"
@@ -114,7 +113,6 @@ def rsa_decrypt(cipher, private_key):
 
 
 def decrypt_message(priv_key_name, id):
-    #sender_id = get_sender_id()
     aes_key = get_aes_key(id)
     nonce = get_aes_nonce(id)
     tag = get_aes_tag(id)
