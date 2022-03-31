@@ -81,15 +81,15 @@ def get_rsa_key(message_id):
     return rsa_key
 
 
-def rsa_encrypt(rsa_key_name, key, receiver_id):
+def rsa_encrypt(key, receiver_id):
 
-    #recipient_key = get_rsa_key(receiver_id)
-    #imported_key = RSA.importKey(recipient_key)
+    recipient_key = get_rsa_key(receiver_id)
+    imported_key = RSA.importKey(recipient_key)
 
-    path_to_file = "C:/Code/NEW_CODE/Comupter_Communication_and_Safety/Joakim projects/first_flask/keys/"
-    recipient_key = RSA.importKey(open(f'{path_to_file}{rsa_key_name}_public.pem', 'r').read())
+    #path_to_file = "C:/Code/NEW_CODE/Comupter_Communication_and_Safety/Joakim projects/first_flask/keys/"
+    #recipient_key = RSA.importKey(open(f'{path_to_file}{rsa_key_name}_public.pem', 'r').read())
 
-    cipher_rsa = PKCS1_OAEP.new(recipient_key)
+    cipher_rsa = PKCS1_OAEP.new(imported_key)
     encrypted_key = cipher_rsa.encrypt(key)
     return encrypted_key
 

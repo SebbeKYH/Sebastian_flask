@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request
 from flask_login import logout_user, login_required, current_user
 
-from controllers.message_controller import create_message, get_user_messages, decrypt_message, get_sender_id
+from controllers.message_controller import create_message, get_user_messages, decrypt_message
 from controllers.user_controller import get_all_but_current_user, get_user_by_id
 
 bp_user = Blueprint('bp_user', __name__)
@@ -54,23 +54,3 @@ def mailbox_get():
 
     print()
     return render_template('mailbox.html', messages=list_of_messages, decrypted_message=decrypted_message_list)
-
-#@bp_user.get('/mailbox')
-#def mailbox_get():
-#    list_of_messages = get_user_messages()
-
-#    message_data = []
-
-
-
-#    path_to_file = "C:/Code/NEW_CODE/Comupter_Communication_and_Safety/Joakim projects/first_flask/keys/"
-#    from Crypto.PublicKey import RSA
-#    rsa_key_name = current_user.email
-#    priv_key_name = RSA.importKey(open(f'{path_to_file}{rsa_key_name}_private.pem', 'r').read())
-
-#    decrypted_message = decrypt_message(priv_key_name=priv_key_name, message=list_of_messages[1])
-#    #i = 0
-#    #for individual_message in list_of_messages:
-#    #    message_data.append(decrypt_message(priv_key_name, message=list_of_messages[i]))
-#    #    i=+1
-#    return render_template('mailbox.html', messages=list_of_messages, decrypted_message=decrypted_message)
